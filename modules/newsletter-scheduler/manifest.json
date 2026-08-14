@@ -1,0 +1,9 @@
+{
+  "name": "newsletter-scheduler",
+  "extends": "Hermes: newsletter + smart notification scheduling (Phase 3)",
+  "dependencies": ["python3", "hermes-agent", "json-chat-export"],
+  "permissions": ["filesystem", "network", "schedule_emails"],
+  "description": "Aggregates content from Hermes sessions, Jane OS modules, and external sources into curated newsletters delivered via email (himalaya CLI) or messaging (Hermes gateway). Uses cronjob scheduling with user-configurable frequency and content relevance scoring.",
+  "install": "Copy module files to Jane install dir; requires himalaya CLI + config for email delivery",
+  "uninstall": "Remove module files from Jane install dir"
+}

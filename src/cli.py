@@ -1,15 +1,17 @@
 #!/usr/bin/env python3
 """
-Jane OS CLI — module management + Phase 2 JSON chat export.
+Jane OS CLI — module management + Phase 2 JSON chat export + Phase 3 newsletter generation.
 
 Module commands: list / install / uninstall (Phase 0).
 Export commands: export / sessions (Phase 2 — json-chat-export module).
+Newsletter: generate (Phase 3 — newsletter-scheduler module).
 """
 import sys
 import json
 import shutil
 import os
 import sqlite3
+import subprocess
 from datetime import datetime, timezone
 
 
@@ -211,6 +213,97 @@ def export_json(session_id=None, offset=0, limit=None, output_path=None):
     return result
 
 
+# ── Phase 3: Newsletter generation (newsletter-scheduler module) ────────────
+
+def generate_newsletter(dry_run=False, limit=10):
+    """
+    Generate a newsletter by aggregating content from:
+      1. Hermes sessions (via state.db)
+      2. Jane OS module updates (git log)
+    Uses the newsletter-scheduler module's generate.py logic inline
+    (reuses json-chat-export's state.db reading pattern).
+    """
+    # Collect sessions
+    sessions = []
+    if os.path.isfile(STATE_DB):
+        conn = sqlite3.connect(STATE_DB)
+        conn.row_factory = sqlite3.Row
+        c = conn.cursor()
+        c.execute("""
+            SELECT id, title, model, message_count, started_at
+            FROM sessions
+            WHERE archived = 0
+            ORDER BY last_activity_at DESC
+            LIMIT ?
+        """, (limit,))
+        for r in c.fetchall():
+            sessions.append({
+                "session_id": r["id"],
+                "title": r["title"] or "(untitled)",
+                "model": r["model"] or "unknown",
+                "message_count": r["message_count"] or 0,
+                "started_at": datetime.fromtimestamp(r["started_at"], tz=timezone.utc).isoformat()
+                if r["started_at"] else None,
+            })
+        conn.close()
+
+    # Collect module updates (git log)
+    updates = []
+    try:
+        result = subprocess.run(
+            ["git", "log", "--oneline", "-5", "--", "modules/"],
+            capture_output=True, text=True, timeout=10
+        )
+        if result.stdout.strip():
+            for line in result.stdout.strip().split("\n")[:5]:
+                parts = line.split(None, 1)
+                updates.append({"commit": parts[0], "message": parts[1] if len(parts) > 1 else ""})
+    except Exception:
+        pass
+
+    # Build newsletter
+    now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
+    lines = [
+        f"# Jane OS Newsletter — {now}",
+        "",
+        "## Recent Sessions",
+        "",
+    ]
+
+    if sessions:
+        for s in sessions[:limit]:
+            lines.append(f"### {s['title']}")
+            lines.append(f"- **Session:** `{s['session_id']}`")
+            lines.append(f"- **Model:** {s['model']}")
+            lines.append(f"- **Messages:** {s['message_count']}")
+            lines.append(f"- **Started:** {s['started_at']}")
+            lines.append("")
+    else:
+        lines.append("_No recent sessions._")
+        lines.append("")
+
+    lines.append("## Module Updates (recent commits)")
+    lines.append("")
+
+    if updates:
+        for u in updates[:5]:
+            lines.append(f"- `{u['commit'][:8]}` — {u['message']}")
+        lines.append("")
+    else:
+        lines.append("_No module updates._")
+        lines.append("")
+
+    content = "\n".join(lines)
+
+    if dry_run:
+        print(content)
+        print(f"\n[DRY RUN] Newsletter preview generated from {len(sessions)} sessions, {len(updates)} updates.")
+    else:
+        print(content)
+
+    return len(sessions) + len(updates) > 0
+
+
 # ── CLI dispatch ─────────────────────────────────────────────────────────────
 
 USAGE = """usage: cli.py <command> [args]
@@ -223,7 +316,10 @@ Module management (Phase 0):
 Chat export (Phase 2 — json-chat-export module):
   sessions                                List Hermes sessions from state.db
   export --format json [--session-id ID]  Export sessions to JSON
-         [--offset N] [--limit N] [--output FILE]"""
+         [--offset N] [--limit N] [--output FILE]
+
+Newsletter (Phase 3 — newsletter-scheduler module):
+  generate [--dry-run] [--limit N]        Generate newsletter from sessions + git log"""
 
 
 def main():
@@ -270,6 +366,24 @@ def main():
             sys.exit(1)
 
         export_json(session_id=session_id, offset=offset, limit=limit, output_path=output_path)
+
+    # Newsletter (Phase 3)
+    elif cmd == "generate":
+        dry_run = "--dry-run" in sys.argv
+        limit = 10
+        args = sys.argv[2:]
+        i = 0
+        while i < len(args):
+            if args[i] == "--dry-run":
+                i += 1
+            elif args[i] == "--limit" and i + 1 < len(args):
+                limit = int(args[i + 1]); i += 2
+            else:
+                print(f"ERROR: unknown argument '{args[i]}'")
+                print(USAGE)
+                sys.exit(1)
+
+        generate_newsletter(dry_run=dry_run, limit=limit)
 
     else:
         print(USAGE)

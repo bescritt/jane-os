@@ -1,0 +1,9 @@
+{
+  "name": "module-marketplace",
+  "extends": "Hermes: community marketplace for module discovery, packaging, and publishing (Phase 4)",
+  "dependencies": ["python3", "hermes-agent", "tar", "sha256sum"],
+  "permissions": ["filesystem", "network", "package_modules"],
+  "description": "Enables module sharing via a local registry: validates manifests, packages modules into .tar.gz with sha256 content hash, supports search by name/tag/description. Integrates with Jane OS CLI (publish/search subcommands).",
+  "install": "Copy module files to Jane install dir; CLI gains 'publish' and 'search' subcommands",
+  "uninstall": "Remove module files; CLI reverts to base commands"
+}

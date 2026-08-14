@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """
-Jane OS CLI — module management + Phase 2 JSON chat export + Phase 3 newsletter generation.
+Jane OS CLI — module management + Phase 2 JSON chat export + Phase 3 newsletter + Phase 4 marketplace.
 
 Module commands: list / install / uninstall (Phase 0).
 Export commands: export / sessions (Phase 2 — json-chat-export module).
 Newsletter: generate (Phase 3 — newsletter-scheduler module).
+Marketplace: publish / search (Phase 4 — module-marketplace module).
 """
 import sys
 import json
@@ -13,6 +14,11 @@ import os
 import sqlite3
 import subprocess
 from datetime import datetime, timezone
+
+# Paths
+JANE_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # repo root (parent of src/)
+STATE_DB = os.path.expanduser("~/.hermes/state.db")
+MODULE_MARKETPLACE_SCRIPT = os.path.join(JANE_ROOT, "modules", "module-marketplace", "scripts", "package.py")
 
 
 # ── Module management (Phase 0) ─────────────────────────────────────────────
@@ -39,8 +45,6 @@ def uninstall(name):
 
 
 # ── Phase 2: JSON chat export (json-chat-export module) ──────────────────────
-
-STATE_DB = os.path.expanduser("~/.hermes/state.db")
 
 
 def list_sessions():
@@ -91,13 +95,6 @@ def _session_to_dict(conn, session_id):
     if not s:
         return None
 
-    if c.execute("SELECT value FROM state_meta WHERE key='schema_version'").fetchone():
-        schema_ver = c.execute(
-            "SELECT value FROM state_meta WHERE key='schema_version'"
-        ).fetchone()[0]
-    else:
-        schema_ver = "unknown"
-
     c.execute("""
         SELECT role, content, timestamp, token_count
         FROM messages
@@ -135,11 +132,7 @@ def _session_to_dict(conn, session_id):
 def export_json(session_id=None, offset=0, limit=None, output_path=None):
     """
     Export Hermes sessions to stable paginated JSON.
-
-    Schema is versioned (version=1.0) with forward-compatible design:
-    - New fields added only as optional (never removed or renamed)
-    - Pagination metadata always included
-    - Export is read-only (no writes to state.db)
+    Schema is versioned (version=1.0) with forward-compatible design.
     """
     if not os.path.isfile(STATE_DB):
         print(f"ERROR: state.db not found at {STATE_DB}")
@@ -149,7 +142,6 @@ def export_json(session_id=None, offset=0, limit=None, output_path=None):
     conn.row_factory = sqlite3.Row
 
     if session_id:
-        # Single session export
         session = _session_to_dict(conn, session_id)
         if session is None:
             print(f"ERROR: session '{session_id}' not found in state.db")
@@ -160,23 +152,15 @@ def export_json(session_id=None, offset=0, limit=None, output_path=None):
             "version": "1.0",
             "exported_at": datetime.now(timezone.utc).isoformat(),
             "sessions": [session],
-            "pagination": {
-                "offset": 0,
-                "limit": 1,
-                "total_sessions": 1,
-                "has_more": False,
-            },
+            "pagination": {"offset": 0, "limit": 1, "total_sessions": 1, "has_more": False},
         }
     else:
-        # Bulk export with pagination
         c = conn.cursor()
-        total = c.execute(
-            "SELECT COUNT(*) FROM sessions WHERE archived = 0"
-        ).fetchone()[0]
+        total = c.execute("SELECT COUNT(*) FROM sessions WHERE archived = 0").fetchone()[0]
 
         if limit is None:
             limit = 50
-        limit = min(limit, 500)  # safety cap
+        limit = min(limit, 500)
 
         c.execute("""
             SELECT id FROM sessions
@@ -215,15 +199,9 @@ def export_json(session_id=None, offset=0, limit=None, output_path=None):
 
 # ── Phase 3: Newsletter generation (newsletter-scheduler module) ────────────
 
+
 def generate_newsletter(dry_run=False, limit=10):
-    """
-    Generate a newsletter by aggregating content from:
-      1. Hermes sessions (via state.db)
-      2. Jane OS module updates (git log)
-    Uses the newsletter-scheduler module's generate.py logic inline
-    (reuses json-chat-export's state.db reading pattern).
-    """
-    # Collect sessions
+    """Generate a newsletter from recent sessions + git log."""
     sessions = []
     if os.path.isfile(STATE_DB):
         conn = sqlite3.connect(STATE_DB)
@@ -231,10 +209,8 @@ def generate_newsletter(dry_run=False, limit=10):
         c = conn.cursor()
         c.execute("""
             SELECT id, title, model, message_count, started_at
-            FROM sessions
-            WHERE archived = 0
-            ORDER BY last_activity_at DESC
-            LIMIT ?
+            FROM sessions WHERE archived = 0
+            ORDER BY last_activity_at DESC LIMIT ?
         """, (limit,))
         for r in c.fetchall():
             sessions.append({
@@ -247,7 +223,6 @@ def generate_newsletter(dry_run=False, limit=10):
             })
         conn.close()
 
-    # Collect module updates (git log)
     updates = []
     try:
         result = subprocess.run(
@@ -261,13 +236,10 @@ def generate_newsletter(dry_run=False, limit=10):
     except Exception:
         pass
 
-    # Build newsletter
     now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
     lines = [
         f"# Jane OS Newsletter — {now}",
-        "",
-        "## Recent Sessions",
-        "",
+        "", "## Recent Sessions", "",
     ]
 
     if sessions:
@@ -284,7 +256,6 @@ def generate_newsletter(dry_run=False, limit=10):
 
     lines.append("## Module Updates (recent commits)")
     lines.append("")
-
     if updates:
         for u in updates[:5]:
             lines.append(f"- `{u['commit'][:8]}` — {u['message']}")
@@ -294,14 +265,43 @@ def generate_newsletter(dry_run=False, limit=10):
         lines.append("")
 
     content = "\n".join(lines)
-
     if dry_run:
         print(content)
         print(f"\n[DRY RUN] Newsletter preview generated from {len(sessions)} sessions, {len(updates)} updates.")
     else:
         print(content)
-
     return len(sessions) + len(updates) > 0
+
+
+# ── Phase 4: Marketplace (module-marketplace module) ─────────────────────────
+
+
+def run_marketplace(cmd_args):
+    """Delegate to the module-marketplace package.py script."""
+    script = os.path.abspath(MODULE_MARKETPLACE_SCRIPT)
+    if not os.path.isfile(script):
+        print(f"ERROR: module-marketplace script not found at {script}", file=sys.stderr)
+        return False
+
+    result = subprocess.run(
+        [sys.executable, script] + cmd_args,
+        capture_output=False, timeout=60
+    )
+    return result.returncode == 0
+
+
+def publish_module(module_name):
+    """Publish a module via the marketplace."""
+    success = run_marketplace(["publish", module_name])
+    if not success:
+        sys.exit(1)
+
+
+def search_modules(query):
+    """Search the local registry via the marketplace."""
+    success = run_marketplace(["search", query])
+    if not success:
+        sys.exit(1)
 
 
 # ── CLI dispatch ─────────────────────────────────────────────────────────────
@@ -319,21 +319,22 @@ Chat export (Phase 2 — json-chat-export module):
          [--offset N] [--limit N] [--output FILE]
 
 Newsletter (Phase 3 — newsletter-scheduler module):
-  generate [--dry-run] [--limit N]        Generate newsletter from sessions + git log"""
+  generate [--dry-run] [--limit N]        Generate newsletter from sessions + git log
+
+Marketplace (Phase 4 — module-marketplace module):
+  publish <module-name>                   Validate + package + register a module
+  search <query>                          Search the local module registry"""
 
 
 def main():
     cmd = sys.argv[1] if len(sys.argv) > 1 else "list"
 
-    # Module management (Phase 0)
     if cmd == "list":
         list_mods()
     elif cmd == "install" and len(sys.argv) > 2:
         install(sys.argv[2])
     elif cmd == "uninstall" and len(sys.argv) > 2:
         uninstall(sys.argv[2])
-
-    # Chat export (Phase 2)
     elif cmd == "sessions":
         list_sessions()
     elif cmd == "export":
@@ -366,8 +367,6 @@ def main():
             sys.exit(1)
 
         export_json(session_id=session_id, offset=offset, limit=limit, output_path=output_path)
-
-    # Newsletter (Phase 3)
     elif cmd == "generate":
         dry_run = "--dry-run" in sys.argv
         limit = 10
@@ -384,7 +383,18 @@ def main():
                 sys.exit(1)
 
         generate_newsletter(dry_run=dry_run, limit=limit)
-
+    elif cmd == "publish":
+        if len(sys.argv) < 3:
+            print("ERROR: publish requires a module name")
+            print("Usage: cli.py publish <module-name>")
+            sys.exit(1)
+        publish_module(sys.argv[2])
+    elif cmd == "search":
+        if len(sys.argv) < 3:
+            print("ERROR: search requires a query")
+            print("Usage: cli.py search <query>")
+            sys.exit(1)
+        search_modules(sys.argv[2])
     else:
         print(USAGE)
         sys.exit(1 if cmd not in ("list",) else 0)

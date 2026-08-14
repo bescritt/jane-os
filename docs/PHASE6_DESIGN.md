@@ -11,7 +11,7 @@ IDEA.md's roadmap ends at Phase 3 (§74). The extrapolation chain:
 - **Phase 5:** Measurement layer (analytics, OSS graduation, monetization, cross-platform, governance)
 - **Phase 6:** Platform maturity — the layer that makes Jane OS sustainable at scale
 
-Phase 6 is about **operational excellence**: making the project production-ready, maintainable,
+Phase 6 focuses on **operational excellence**: making the project production-ready, maintainable,
 and scalable. Where Phases 0-5 built features and infrastructure, Phase 6 hardens the
 platform for long-term community use.
 
@@ -43,7 +43,7 @@ tools that make contributing effortless.
   ├── module-lint: lint module code + check for anti-patterns
   │     Checks: snakeoil secrets (osint/secret-hygiene), unused deps, path traversal safety
   └── module-submit: package + prepare PR for review
-           Validates: all gates pass → open PR with auto-generated description
+          Validates: all gates pass → open PR with auto-generated description
 ```
 
 ### 1.3 Integration Points
@@ -70,9 +70,9 @@ tools that make contributing effortless.
 - None new (all reuse existing Phase 0-5 modules)
 
 ### 1.7 Procurement Note (PMP Procurement KA)
-All four commands are build-vs-buy decisions: building in Python (stdlib) ensures zero
-external dependencies. The make/buy call: building is cheaper than integrating an external
-scaffolding tool (e.g., cookiecutter) because the module structure is simpler than a
+All four commands represent build-vs-buy decisions: building in Python (stdlib) ensures zero
+external dependencies. The make/buy call: building costs less than integrating an external
+scaffolding tool (e.g., cookiecutter) because the module structure runs simpler than a
 generic project template.
 
 ---
@@ -127,9 +127,9 @@ analytics layer into actionable performance insights.
 ## 3.0 Documentation Modernization
 
 ### 3.1 Overview
-Per IDEA.md §48 ("be testable"), Phase 6 ensures documentation is always in sync with code.
-This goes beyond Phase 3-5 design docs — it's about automating documentation so it never
-drifts.
+Per IDEA.md §48 ("be testable"), Phase 6 ensures documentation stays in sync with code.
+This goes beyond Phase 3-5 design docs — it automates documentation so the docs never
+drift.
 
 ### 3.2 Architecture
 ```
@@ -145,7 +145,7 @@ drifts.
 ```
 
 ### 3.3 Integration Points
-- **`module-marketplace`** (Phase 4): manifest.json is the source of truth
+- **`module-marketplace`** (Phase 4): manifest.json serves as source of truth
 - **`architecture-diagram` skill**: Mermaid diagram generation
 - **`documentation` skill**: existing docs quality patterns
 - **`hermes-agent-skill-authoring` skill**: SKILL.md template patterns
@@ -160,7 +160,7 @@ drifts.
 | **Total** | | **8.0 units** |
 
 ### 3.5 Risks
-- R-P6-5: Generated docs less useful than hand-written → mitigation: generated docs as baseline, manual edits as enhancements (not replacements)
+- R-P6-5: Generated docs less useful than hand-written → mitigation: generated docs serve as baseline, manual edits enhance (not replace)
 
 ---
 
@@ -218,9 +218,9 @@ Phase 5 complete ──FS──> P6-1 (DX Platform) ──FS──> P6-4 (Releas
                       └─FS─> P6-4 (Release Automation)
 ```
 
-P6-1 (DX) and P6-3 (Docs) can run in parallel. P6-2 (Performance) depends on P6-3 (docs
-need benchmarks documented). P6-4 (Release) depends on P6-1 (DX init needs to be in the
-template).
+P6-1 (DX) and P6-3 (Docs) run in parallel. P6-2 (Performance) depends on P6-1 (profiling
+tools enable benchmarks). P6-4 (Release) depends on P6-1 (DX platform defines the release
+tooling template).
 
 ## Phase 6 Resource Requirements
 
@@ -236,13 +236,13 @@ template).
 
 ## Sequencing Recommendation
 
-Phase 6 is **maturity engineering** — it transforms Jane OS from a working prototype into a
+Phase 6 serves as **maturity engineering** — it transforms Jane OS from a working prototype into a
 production-ready open source project. Recommended execution order:
 
 1. **P6-1 (DX Platform)** — 8.0 units: makes ALL other work easier, reduces friction
-2. **P6-3 (Docs)** — 8.0 units: ensures everything is documented and discoverable
-3. **P6-2 (Performance)** + **P6-4 (Release)** in parallel — 9.0 + 8.5 = 17.5 units
+2. **P6-2 (Performance)** — 9.0 units: provides measurement baseline before docs/release
+3. **P6-3 (Docs)** + **P6-4 (Release)** in parallel — 8.0 + 8.5 = 16.5 units
 
-Phase 6 items should be executed as separate PROJECT-mode invocations (3-4 sessions), each
-gated by judge_gate + smoke_test. This is the natural conclusion of the Wheel iteration:
+Phase 6 items execute as separate PROJECT-mode invocations (3-4 sessions), each
+gated by judge_gate + smoke_test. This serves as the natural conclusion of the Wheel iteration:
 the experiment revealed concrete improvements, and Phase 6 plans the systematic follow-up.

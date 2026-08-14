@@ -10,7 +10,7 @@ parity with Khoj's 9 "gap" capabilities (IDEA.md §25-34), satisfying IDEA.md §
 ("Provide all nine Khoj-gap capabilities listed above with measurable parity").
 
 ## Current Status
-This module is a **scaffold with implementation** — the `collect.py` script computes
+This module serves as a **scaffold with implementation** — the `collect.py` script computes
 real metrics from `state.db` and the CLI `analytics` subcommand outputs them as JSON.
 
 ## Manifest Fields
@@ -38,7 +38,7 @@ real metrics from `state.db` and the CLI `analytics` subcommand outputs them as 
 ```
 [state.db (sessions + messages tables)]
   ├── Aggregate: session count, message count, token usage, cost
-  ├── Per-capability: scan messages for tool/skill keywords
+  ├── Per-capability: scan tool_name/tool_calls columns for real invocations
   └── Per-model: usage breakdown (latency, tokens, cost)
          │
          ▼
@@ -78,6 +78,7 @@ python3 modules/analytics-tracker/scripts/collect.py --output /tmp/metrics.json
 {
   "version": "1.0",
   "collected_at": "2026-08-14T21:30:00Z",
+  "db_fingerprint": "7a9176e45182c7cf...",
   "metrics": {
     "total_sessions": 24,
     "total_messages": 10494,
@@ -90,17 +91,16 @@ python3 modules/analytics-tracker/scripts/collect.py --output /tmp/metrics.json
     "osint_tooling": {"sessions": 5, "messages": 127},
     "reverse_engineering": {"sessions": 3, "messages": 42},
     "gpu_cuda": {"sessions": 2, "messages": 18},
-    "desktop_gui": {"sessions": 1, "messages": 23},
-    "local_judge": {"sessions": 8, "messages": 301},
+    "desktop_gui": {"sessions": 1, "messages": 33},
+    "local_judge": {"sessions": 8, "messages": 170},
     "tiered_memory": {"sessions": 3, "messages": 89},
-    "eprime_enforcement": {"sessions": 0, "messages": 0},
     "subagent_orchestration": {"sessions": 7, "messages": 210},
     "procedural_skills": {"sessions": 12, "messages": 415}
   },
   "khoj_parity": {
-    "capabilities_with_data": 7,
-    "capabilities_without_data": 2,
-    "total_capabilities": 9
+    "capabilities_with_data": 8,
+    "capabilities_without_data": 0,
+    "total_capabilities": 8
   }
 }
 ```

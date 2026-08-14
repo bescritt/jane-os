@@ -10,7 +10,7 @@ modules, and external sources into curated newsletters delivered via email or
 messaging.
 
 ## Current Status
-This module is a **scaffold** — the manifest and core script are in place.
+This module serves as a **scaffold** — the manifest and core script serve in place.
 Email delivery requires the `himalaya` CLI (see prerequisites).
 
 ## Manifest Fields
@@ -113,5 +113,5 @@ Create `~/.jane/newsletter-scheduler.json`:
 
 ## Current Limitations
 - Email delivery requires himalaya CLI (not installed in this environment)
-- External source integration (Exa/web_search) is a Phase 2 dependency
-- This is a scaffold — the generator script provides structure only
+- External source integration (Exa/web_search) serves as a Phase 2 dependency
+- This serves as a scaffold — the generator script provides structure only

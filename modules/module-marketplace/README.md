@@ -9,7 +9,7 @@ Phase 4 module for Jane OS. Enables community sharing of Jane OS modules via a
 local registry with manifest validation, content-hashed packaging, and search.
 
 ## Current Status
-This module is **implemented** — the `package.py` script provides manifest validation,
+This module serves as **implemented** — the `package.py` script provides manifest validation,
 `.tar.gz` packaging with SHA256 content hash, and a local registry with search.
 
 ## Manifest Fields
@@ -87,5 +87,5 @@ ls ~/.jane/registry/
 - No external packages required
 
 ## Current Limitations
-- Local registry only (single user). Distributed registry (Phase 4.1.4) is planned.
-- Secret scanning via `osint/secret-hygiene` skill is documented but not yet integrated.
+- Local registry only (single user). Distributed registry (Phase 4.1.4) serves as planned.
+- Secret scanning via `osint/secret-hygiene` skill remains documented but not yet integrated.

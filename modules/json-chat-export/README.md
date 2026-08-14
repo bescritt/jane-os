@@ -10,7 +10,7 @@ stable, paginated JSON format for external consumption (analytics, backup,
 integration with other tools).
 
 ## Current Status
-This module is a **proof-of-concept implementation** — it reads from the Hermes
+This module serves as a **proof-of-concept implementation** — it reads from the Hermes
 `~/.hermes/state.db` SQLite session store and produces paginated JSON export.
 
 ## Manifest Fields

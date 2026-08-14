@@ -9,8 +9,8 @@ Phase 1 module for Jane OS. Bridges Jane OS with
 [Obsidian](https://obsidian.md/) — the local-first Markdown knowledge base.
 
 ## Current Status
-This is a **scaffold** — the manifest and directory structure are in place.
-The actual API client and sync logic will be implemented in subsequent iterations.
+This module serves as a **scaffold** — the manifest and directory structure serve in place.
+The actual API client and sync logic implement in subsequent iterations.
 
 ## Manifest Fields
 - **name**: `obsidian-adapter`
@@ -42,7 +42,7 @@ python3 src/cli.py list
 ```
 
 ## Configuration
-Phase 2 will add a config file at `~/.jane/obsidian-adapter.json`:
+Phase 2 adds a config file at `~/.jane/obsidian-adapter.json`:
 ```json
 {
   "vault_path": "/path/to/obsidian/vault",

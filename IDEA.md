@@ -13,14 +13,14 @@ Each module should declare:
 - **Not a clone of Khoj**
 - **Not a replacement for Hermes core tools, judge, memory, or E-Prime enforcement**
 - **Not a generic agent framework**
-- **Not a duplicate of features Hermes already has**, unless they need to be productized
-- **Not a SaaS product in its own right** — enterprise tier is an overlay deployment layer for Hermes+Jane, not a separate hosted service
+- **Not a duplicate of features Hermes already has**, unless those features need productization
+- **Not a SaaS product in its own right** — the enterprise tier serves as an overlay deployment layer for Hermes+Jane, not a separate hosted service
 
 ---
 
 ## Why Not Just Use Khoj?
 
-Because Khoj does not ship the deep agentic capabilities that Hermes does:
+Khoj lacks the deep agentic capabilities that Hermes provides:
 
 - OSINT tooling
 - Reverse engineering tools
@@ -32,7 +32,7 @@ Because Khoj does not ship the deep agentic capabilities that Hermes does:
 - Subagent orchestration
 - Procedural skills
 
-Users who need those capabilities are running Hermes. Jane OS gives them the missing product layer without abandoning Hermes.
+Users who need those capabilities run Hermes. Jane OS provides the missing product layer without abandoning Hermes.
 
 ---
 
@@ -43,9 +43,9 @@ A stock Hermes installation plus Jane OS should:
 1. Provide all nine Khoj-gap capabilities listed above with measurable parity
 2. Preserve existing Hermes agentic behavior unchanged
 3. Install and uninstall cleanly on Windows, macOS, and Linux
-4. Be modular: users can enable only the modules they need
-5. Respect Hermes’s offline-first, fail-closed, and consent-oriented design
-6. Be testable against the measured behavior of Khoj and Hermes
+4. Serve as modular: users enable only the modules they need
+5. Respect Hermes's offline-first, fail-closed, and consent-oriented design
+6. Test against the measured behavior of Khoj and Hermes
 
 ---
 
@@ -77,7 +77,7 @@ A stock Hermes installation plus Jane OS should:
 
 ## Contributing
 
-This repository is intentionally public and open to contributions.
+This repository serves as intentionally public and open to contributions.
 
 Good first steps:
 

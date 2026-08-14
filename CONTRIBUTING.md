@@ -13,12 +13,12 @@ the process for submitting changes.
 
 ## Code of Conduct
 
-This project follows the Hermes Agent community standards. Be respectful,
+This project follows the Hermes Agent community standards. Treat others with respect,
 constructive, and assume good faith in all interactions.
 
 ## Getting Started
 
-Jane OS is a lightweight overlay for Hermes Agent. To get started:
+Jane OS serves as a lightweight overlay for Hermes Agent. To start:
 
 1. Fork the repository
 2. Clone your fork:
@@ -44,7 +44,7 @@ Jane OS is a lightweight overlay for Hermes Agent. To get started:
 
 ## Module Development
 
-Jane OS is modular. See `IDEA.md` for the roadmap and `modules/sample_module/`
+Jane OS serves as modular. See `IDEA.md` for the roadmap and `modules/sample_module/`
 for the manifest format.
 
 Each module must declare:
@@ -68,7 +68,7 @@ bash tests/smoke_test.sh
 2. Use the PR template — fill out the description and checklist
 3. Request review from a maintainer
 4. Address review feedback
-5. Once CI is green and you have approval, a maintainer will merge
+5. Once CI runs green and you have approval, a maintainer merges
 
 ## Questions?
 

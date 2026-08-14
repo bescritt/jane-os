@@ -12,7 +12,7 @@ Phase 2 of Jane OS (IDEA.md §67) has three items:
 
 This document specifies the design, integration points, dependencies, and
 estimation for each. All Phase 2 items integrate with existing Hermes Agent
-capabilities — Jane OS is an overlay, not a replacement.
+capabilities — Jane OS serves as an overlay, not a replacement.
 
 ## Integration Anchors (Existing Hermes Skills)
 
@@ -22,7 +22,7 @@ skills provide the integration surface for Phase 2:
 | Phase 2 Item | Anchor Skill | Skill Path | Integration Point |
 |---|---|---|---|
 | pgvector RAG | llama-cpp | `~/.hermes/skills/llm/inference/llama-cpp` | `Llama(embedding=True)` → `llm.embed("text")` produces vectors |
-| JSON chat export | hermes-features-reference | `~/.hermes/skills/agentic/agents/hermes-features-reference` | `~/.hermes/state.db` is the SQLite session store; sessions under `~/.hermes/sessions/` |
+| JSON chat export | hermes-features-reference | `~/.hermes/skills/agentic/agents/hermes-features-reference` | `~/.hermes/state.db` holds the SQLite session store; sessions appear under `~/.hermes/sessions/` |
 | Exa reader | web-research-custody + blocked-page-recovery | `~/.hermes/skills/web-research-custody`, `research/blocked-page-recovery` | `web_search` supports Exa backend; recovery ladder (Wayback → archive.today → Jina) |
 
 Additional relevant skills:
@@ -96,16 +96,17 @@ Per `llama-cpp` skill guidance:
 - **Skills:** llama-cpp (already available)
 
 ### 1.6 Estimation
+
 | Step | Effort | Notes |
 |---|---|---|
 | P2-1.1 | 0.5 unit | Local PostgreSQL setup |
 | P2-1.2–P2-1.4 | 1.0 unit | Schema + extension |
 | P2-1.5–P2-1.6 | 1.5 units | Embedding pipeline + CLI |
 | P2-1.7 | 1.0 unit | Hermes tool integration |
-| **Total** | **4.0 units** | CPU-bound embedding; batch indexing is the bottleneck |
+| **Total** | **4.0 units** | CPU-bound embedding; batch indexing serves as the bottleneck |
 
 ### 1.7 Risks
-- R-P2-1: CPU embedding is slow (minutes for hundreds of documents) — mitigation: batch + progress
+- R-P2-1: CPU embedding runs slow (minutes for hundreds of documents) — mitigation: batch + progress
 - R-P2-2: pgvector index accuracy depends on IVF nlist — mitigation: default nlist=100, tunable
 
 ---
@@ -121,7 +122,7 @@ Per `hermes-features-reference` skill (§6: Key Paths):
 - `~/.hermes/state.db` — SQLite session store (primary data source)
 - `~/.hermes/sessions/` — Session transcripts (raw, human-readable)
 
-The SQLite DB is the structured source of truth; session files are supplementary.
+The SQLite DB serves as the structured source of truth; session files remain supplementary.
 
 ### 2.3 JSON Schema
 
@@ -185,9 +186,9 @@ python3 src/cli.py export --format json --session-id 20260722_204335_d62c16 --ou
 
 ### 2.6 Stability Guarantees
 - Schema includes `version` field for forward compatibility
-- New fields added only as optional (never removed or renamed)
-- Export is read-only — no writes to `state.db`
-- Pagination metadata always included
+- New fields add only as optional (never removed or renamed)
+- Export runs as read-only — no writes to `state.db`
+- Pagination metadata always includes current state
 
 ### 2.7 Dependencies
 - **Python:** `sqlite3` (stdlib), `json` (stdlib), `pathlib` (stdlib)
@@ -195,8 +196,9 @@ python3 src/cli.py export --format json --session-id 20260722_204335_d62c16 --ou
 - **No external services** — pure local SQLite read
 
 ### 2.8 Estimation
+
 | Step | Effort |
-|---|---|
+|---|---||
 | P2-2.1–P2-2.3 | 1.0 unit |
 | P2-2.4–P2-2.6 | 1.5 units |
 | **Total** | **2.5 units** |
@@ -244,14 +246,14 @@ web content and stores it as Jane notes, with a fallback chain for resilience.
 The `blocked-page-recovery` skill (§: "The ladder") defines a proven 5-step
 fallback: Wayback → archive.today → Jina Reader → API-first → real browser.
 The Exa reader adopts this exact ladder as its recovery chain when Exa returns
-4xx/5xx or content is unavailable. This reuses a verified pattern (the skill's
+4xx/5xx or content remains unavailable. This reuses a verified pattern (the skill's
 script `scripts/recover_page.py` proves the ladder works).
 
 ### 3.4 Integration with web-research-custody skill
 The `web-research-custody` skill defines a provenance discipline: every fetched
-page must carry a provenance record (`manifest.csv` with sha256 hash + source URL).
-The Exa reader adopts this for chain-of-custody: each fetched page is hashed and
-recorded before storage, so claims are auditable.
+page carries a provenance record (`manifest.csv` with sha256 hash + source URL).
+The Exa reader adopts this for chain-of-custody: each fetched page gets hashed and
+recorded before storage, which makes claims auditable.
 
 ### 3.5 Implementation Steps
 
@@ -268,8 +270,8 @@ recorded before storage, so claims are auditable.
 ### 3.6 Credentials & Security
 Per `osint/secret-hygiene` skill:
 - `EXA_API_KEY` stored in `~/.hermes/.env` (never in repo)
-- Key never logged or echoed
-- API key passed via header (`Authorization: Bearer $EXA_API_KEY`)
+- Key never logs or echoes
+- API key passes via header (`Authorization: Bearer ***`)
 - No proxy relays (per blocked-page-recovery §"Proxy relays: don't")
 
 ### 3.7 Dependencies
@@ -278,15 +280,16 @@ Per `osint/secret-hygiene` skill:
 - **Skills:** blocked-page-recovery, web-research-custody, osint/secret-hygiene
 
 ### 3.8 Estimation
+
 | Step | Effort | Notes |
 |---|---|---|
-| P2-3.1 | 0.5 unit | Exa API is well-documented |
+| P2-3.1 | 0.5 unit | Exa API proves well-documented |
 | P2-3.2–P2-3.4 | 1.5 units | Recovery ladder + provenance |
 | P2-3.5–P2-3.7 | 1.0 unit | CLI + storage |
 | **Total** | **3.0 units** | Network-bound; API-dependent |
 
 ### 3.9 Risks
-- R-P2-5: Exa is paid API — requires user credential → mitigation: document as prerequisite, suggest free alternatives
+- R-P2-5: Exa runs as paid API — requires user credential → mitigation: document as prerequisite, suggest free alternatives
 - R-P2-6: Fallback to browser (last ladder step) requires `browser_exec` tool → mitigation: only use for interactive recovery
 
 ---
@@ -324,12 +327,12 @@ Phase 2 Items
                                              └─FS──> P2-3 (Exa Reader)
 ```
 
-**P2-2 (JSON Export)** is sequenced first — it has zero external dependencies (pure stdlib SQLite read)
-and establishes the session export format that P2-1 will consume (exported sessions → embedded in pgvector).
+**P2-2 (JSON Export)** sequences first — it runs with zero external dependencies (pure stdlib SQLite read)
+and establishes the session export format that P2-1 builds on (exported sessions → embedded in pgvector).
 
-**P2-1 (pgvector)** and **P2-3 (Exa Reader)** are independent of each other; both consume P2-2 output.
+**P2-1 (pgvector)** and **P2-3 (Exa Reader)** remain independent of each other; both consume P2-2 output.
 
-**Rationale:** P2-2 is the foundational data-access layer; P2-1 and P2-3 both build on exported session
+**Rationale:** P2-2 serves as the foundational data-access layer; P2-1 and P2-3 both build on exported session
 data. This sequencing minimizes rework if the JSON schema needs adjustment.
 
 ---
@@ -342,4 +345,4 @@ data. This sequencing minimizes rework if the JSON schema needs adjustment.
 - [A4] `jane export --offset N --limit M` returns exactly M sessions (or fewer at end)
 - [A5] `jane read "<url>"` fetches content via Exa, stores with provenance hash
 - [A6] Exa reader falls back to Wayback/archive.today when Exa returns errors
-- [A7] All Phase 2 modules pass smoke_test.sh and are installable via `src/cli.py`
+- [A7] All Phase 2 modules pass smoke_test.sh and install via `src/cli.py`

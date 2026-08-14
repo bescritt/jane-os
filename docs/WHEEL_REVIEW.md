@@ -12,7 +12,7 @@
 |---|---|---|
 | 1. Observation | DISCOVERY scan + state.db inspection | 19 files, 17 module files, 24 sessions, 2740 messages |
 | 2. Hypothesis | Form testable hypotheses about gaps | 4 hypotheses: stale docs, over-counting, missing README declarations, false E-Prime attribution |
-| 3. Prediction | Predict what verification will reveal | Smoke test passes; analytics over-counts; E-Prime is false positive; READMEs lack extends declarations |
+| 3. Prediction | Predict what verification will reveal | Smoke test passes; analytics over-counts; E-Prime serves as false positive; READMEs lack extends declarations |
 | 4. Experiment | Run full verification suite | analytics command + state.db inspection + README header check + smoke test |
 | 5. Theory/Conclusion | Synthesize findings → write review + apply fixes | 3 bugs found + 1 improvement applied; reviewed for next iteration |
 
@@ -21,7 +21,7 @@
 ### F1 — Capability detection over-counts (CONFIRMED)
 The analytics tracker scanned message `content` for capability keywords, which inflates
 counts because content includes prose mentions of tools (e.g., a user asking "can you run
-OSINT on this domain?" counts as OSINT tooling usage). The state.db has structured
+OSINT on this domain?" counts as OSINT tooling usage). The state.db holds structured
 `tool_name` and `tool_calls` columns that record actual invocations. **Fix:** use
 `tool_name` + `tool_calls` as primary signal, `content` as secondary fallback.
 
@@ -38,10 +38,10 @@ it extends." None of the 7 module READMEs had this declaration. **Fix:** added
 `Extends:`, `Dependencies:`, `Permissions:` declaration block to all 7 READMEs, sourced
 from their manifest.json fields.
 
-### F4 — PHASE2 design doc is a plan, not a claim of completion (NOT A BUG)
-H2 was partially wrong — PHASE2_DESIGN.md §2.2 L180 says "Define JSON schema (versioned,
-stable)" as a planning item, not a claim of completion. The design doc is the *plan*;
-the json-chat-export module is the *implementation*. No fix needed, but clarified in
+### F4 — PHASE2 design doc serves as a plan, not a claim of completion (NOT A BUG)
+H2 partially misread — PHASE2_DESIGN.md §2.2 L180 says "Define JSON schema (versioned,
+stable)" as a planning item, not a claim of completion. The design doc serves as the *plan*;
+the json-chat-export module serves as the *implementation*. No fix needed, but clarified in
 collect.py docstring.
 
 ## Changes Applied
@@ -67,7 +67,7 @@ exit=0
 
 ## Next Iteration Priority
 
-The analytics tracker is now accurate. Next Wheel iteration should focus on:
+The analytics tracker now operates accurately. Next Wheel iteration should target:
 1. Implement more Phase 5 items (OSS graduation, cross-platform CI)
-2. Begin Phase 6 implementation (plugin architecture, session persistence)
+2. Begin Phase 6 implementation (DX platform, release automation)
 3. Cross-check analytics metrics against actual tool invocation logs for accuracy

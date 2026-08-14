@@ -6,12 +6,13 @@
 
 ## Overview
 
-IDEA.md's roadmap ends at Phase 3 (§74). Phases 4 and 5 are extrapolations from the success
+IDEA.md's roadmap ends at Phase 3 (§74). Phases 4 and 5 extrapolate from the success
 criteria (§39-48) and the Contributing section (§81):
 
 - **Phase 4** = Product platform (community marketplace, as implemented)
 - **Phase 5** = Product completion (analytics, monetization, open-source graduation, ecosystem
   governance)
+- **Phase 6** = Platform maturity — the layer that makes Jane OS sustainable at scale
 
 Phase 5 completes the vision: a self-sustaining, community-driven, open-source platform that
 competes with commercial alternatives (Khoj, Obsidian, etc.) through measurable parity (IDEA.md §41).
@@ -19,7 +20,7 @@ competes with commercial alternatives (Khoj, Obsidian, etc.) through measurable 
 ## Five Core Themes
 
 1. **Analytics & Measurement** — Close the loop on IDEA.md §46 ("be testable against measured
-   behavior"). Build telemetry that can *measure* the 9 Khoj-gap capabilities (§41-43).
+   behavior"). Build telemetry that measures the 9 Khoj-gap capabilities (§41-43).
 2. **Open Source Graduation** — Move from single-author scaffold to community-owned project
    (license, docs, governance, contributor pipeline). Per IDEA.md §81 ("intentionally public and
    open to contributions").
@@ -36,7 +37,7 @@ competes with commercial alternatives (Khoj, Obsidian, etc.) through measurable 
 
 ### 1.1 Overview
 The success criteria require "measurable parity" with Khoj's 9 capabilities (§41). Phase 5
-builds the instrumentation layer that *measures* this parity, closing the loop on
+builds the instrumentation layer that measures this parity, closing the loop on
 IDEA.md §46 ("be testable against the measured behavior of Khoj and Hermes").
 
 ### 1.2 Architecture
@@ -87,7 +88,7 @@ IDEA.md §46 ("be testable against the measured behavior of Khoj and Hermes").
 ## 2.0 Open Source Graduation
 
 ### 2.1 Overview
-IDEA.md §81 says the repo is "intentionally public and open to contributions." Phase 5
+IDEA.md §81 states the repo serves as intentionally public and open to contributions. Phase 5
 formalizes this: a real open-source project with governance, contributor pipeline, and
 community health.
 
@@ -171,8 +172,8 @@ How the Jane OS project sustains long-term maintenance and development. Not a re
 ## 4.0 Cross-Platform Testing Matrix
 
 ### 4.1 Overview
-IDEA.md §45: "Install and uninstall cleanly on Windows, macOS, and Linux."
-Currently only Linux is tested. Phase 5 builds the CI matrix.
+IDEA.md §45: "Install anduninstall cleanly on Windows, macOS, and Linux."
+Currently only Linux runs tests. Phase 5 builds the CI matrix.
 
 ### 4.2 Architecture
 ```
@@ -265,7 +266,7 @@ Phase 4 complete ──FS──> P5-1 (Analytics) ──FS──> P5-5 (Governan
 
 ## Sequencing Recommendation
 
-Phase 5 is best executed as **5 parallel tracks** (each themed), coordinated by the
+Phase 5 runs as **5 parallel tracks** (each themed), coordinated by the
 marketplace publish/review workflow (P5-5). P5-1 (Analytics) and P5-2 (OSS Graduation)
-can run entirely in parallel. P5-3 (Monetization) depends on P5-2 (needs community).
-P5-4 (Cross-Platform) is independent and can be done anytime.
+run entirely in parallel. P5-3 (Monetization) depends on P5-2 (needs community).
+P5-4 (Cross-Platform) runs independently at any time.

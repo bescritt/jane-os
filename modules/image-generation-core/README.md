@@ -1,5 +1,10 @@
 # Image Generation Core Module
 
+**Extends:** Hermes: image generation core module (Phase 1)
+**Dependencies:** python3
+**Permissions:** filesystem, network
+
+
 Phase 1 module for Jane OS. Provides core image generation capabilities for
 Hermes Agent using local diffusion models.
 

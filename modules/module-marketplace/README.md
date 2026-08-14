@@ -1,5 +1,10 @@
 # Module Marketplace
 
+**Extends:** Hermes: community marketplace for module discovery, packaging, and publishing (Phase 4)
+**Dependencies:** python3, hermes-agent, tar, sha256sum
+**Permissions:** filesystem, network, package_modules
+
+
 Phase 4 module for Jane OS. Enables community sharing of Jane OS modules via a
 local registry with manifest validation, content-hashed packaging, and search.
 

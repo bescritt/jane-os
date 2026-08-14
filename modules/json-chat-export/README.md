@@ -1,5 +1,10 @@
 # JSON Chat Export Module
 
+**Extends:** Hermes: stable JSON chat export with pagination (Phase 2)
+**Dependencies:** python3, hermes-agent
+**Permissions:** filesystem, read:state_db
+
+
 Phase 2 module for Jane OS. Exports Hermes Agent conversation sessions to
 stable, paginated JSON format for external consumption (analytics, backup,
 integration with other tools).

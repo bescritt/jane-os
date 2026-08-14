@@ -1,5 +1,10 @@
 # Obsidian Client Adapter Module
 
+**Extends:** Hermes: Obsidian client adapter (Phase 1)
+**Dependencies:** python3, hermes-agent
+**Permissions:** filesystem, network
+
+
 Phase 1 module for Jane OS. Bridges Jane OS with
 [Obsidian](https://obsidian.md/) — the local-first Markdown knowledge base.
 

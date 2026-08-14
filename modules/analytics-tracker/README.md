@@ -1,5 +1,10 @@
 # Analytics Tracker Module
 
+**Extends:** Hermes: analytics metrics for Khoj-gap capability parity tracking (Phase 5)
+**Dependencies:** python3, hermes-agent, json-chat-export
+**Permissions:** filesystem, read:state_db
+
+
 Phase 5 module for Jane OS. Collects metrics from Hermes's `state.db` to measure
 parity with Khoj's 9 "gap" capabilities (IDEA.md §25-34), satisfying IDEA.md §43
 ("Provide all nine Khoj-gap capabilities listed above with measurable parity").

@@ -1,5 +1,10 @@
 # Newsletter Scheduler Module
 
+**Extends:** Hermes: newsletter + smart notification scheduling (Phase 3)
+**Dependencies:** python3, hermes-agent, json-chat-export
+**Permissions:** filesystem, network, schedule_emails
+
+
 Phase 3 module for Jane OS. Aggregates content from Hermes sessions, Jane OS
 modules, and external sources into curated newsletters delivered via email or
 messaging.

@@ -1,0 +1,9 @@
+{
+  "name": "obsidian-adapter",
+  "extends": "Hermes: Obsidian client adapter (Phase 1)",
+  "dependencies": ["python3", "hermes-agent"],
+  "permissions": ["filesystem", "network"],
+  "description": "Client adapter that bridges Jane OS with Obsidian (local Markdown vault), enabling bidirectional note sync and query access between Hermes Agent and Obsidian. Phase 1 scaffold — API client and sync logic to be implemented in subsequent iterations.",
+  "install": "Copy module files to Jane install dir",
+  "uninstall": "Remove module files from Jane install dir"
+}

@@ -59,6 +59,14 @@ python3 src/cli.py uninstall <module-name>
 |---|---|---|
 | `sample_module` | Sample module demonstrating the manifest format | Phase 0 |
 | `image-generation-core` | Diffusion-based image synthesis core | Phase 1 (scaffold) |
+| `obsidian-adapter` | Obsidian client adapter for vault sync | Phase 1 (scaffold) |
+
+## Roadmap
+
+See [`IDEA.md`](IDEA.md) for the full roadmap. Current status:
+- **Phase 0** — Foundation complete (CI, docs, templates, smoke tests)
+- **Phase 1** — In progress (Obsidian adapter, image-gen core, TTS module)
+- **Phase 2** — Planned (pgvector RAG, JSON export, Exa reader) — see [`docs/PHASE2_DESIGN.md`](docs/PHASE2_DESIGN.md)
 
 ## Contributing
 

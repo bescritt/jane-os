@@ -1,0 +1,4 @@
+__pycache__/
+.jane_installed/
+.env
+.venv

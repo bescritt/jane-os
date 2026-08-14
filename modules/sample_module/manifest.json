@@ -1,0 +1,9 @@
+{
+  "name": "sample_module",
+  "extends": "Hermes: image generation core (placeholder)",
+  "dependencies": ["python3"],
+  "permissions": ["filesystem"],
+  "install": "Copy module files to Jane install dir",
+  "uninstall": "Remove module files from Jane install dir",
+  "description": "A tiny sample module demonstrating manifest fields required by IDEA.md"
+}

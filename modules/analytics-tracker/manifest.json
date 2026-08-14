@@ -1,0 +1,9 @@
+{
+  "name": "analytics-tracker",
+  "extends": "Hermes: analytics metrics for Khoj-gap capability parity tracking (Phase 5)",
+  "dependencies": ["python3", "hermes-agent", "json-chat-export"],
+  "permissions": ["filesystem", "read:state_db"],
+  "description": "Collects and reports metrics from Hermes state.db to measure parity with Khoj's 9 gap capabilities (OSINT, reverse engineering, GPU/CUDA, desktop GUI, local judge, tiered memory, E-Prime, subagent orchestration, procedural skills). Outputs versioned JSON for CI/CD integration.",
+  "install": "Copy module files to Jane install dir; CLI gains 'analytics' subcommand",
+  "uninstall": "Remove module files; CLI reverts to base commands"
+}

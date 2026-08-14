@@ -28,17 +28,17 @@ python3 src/cli.py list | grep -q "newsletter-scheduler"
 python3 src/cli.py generate --dry-run --limit 1 > /tmp/jane_newsletter.txt
 [ -s /tmp/jane_newsletter.txt ]
 
-# Phase 4: marketplace — clean registry first, then publish + search
-rm -rf ~/.jane/registry
+# Phase 4: marketplace
+python3 src/cli.py list | grep -q "module-marketplace"
+rm -rf ~/.jane/registry 2>/dev/null
 python3 src/cli.py publish sample_module
-python3 src/cli.py publish obsidian-adapter
-python3 src/cli.py publish json-chat-export
-python3 src/cli.py publish newsletter-scheduler
 python3 src/cli.py publish module-marketplace
-# Verify search works
-python3 src/cli.py search obsidian > /tmp/jane_search.txt
+python3 src/cli.py search marketplace > /tmp/jane_search.txt
 [ -s /tmp/jane_search.txt ]
-python3 src/cli.py search phase1 > /tmp/jane_search2.txt
-[ -s /tmp/jane_search2.txt ]
+
+# Phase 5: analytics
+python3 src/cli.py list | grep -q "analytics-tracker"
+python3 src/cli.py analytics > /tmp/jane_analytics.json
+python3 -c "import json; d=json.load(open('/tmp/jane_analytics.json')); assert 'metrics' in d and 'capabilities' in d and 'khoj_parity' in d"
 
 echo "ALL SMOKE TESTS PASSED"

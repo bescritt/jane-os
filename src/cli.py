@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 """
-Jane OS CLI — module management + Phase 2 JSON chat export + Phase 3 newsletter + Phase 4 marketplace.
+Jane OS CLI — module management + Phase 2 export + Phase 3 newsletter + Phase 4 marketplace + Phase 5 analytics.
 
 Module commands: list / install / uninstall (Phase 0).
 Export commands: export / sessions (Phase 2 — json-chat-export module).
 Newsletter: generate (Phase 3 — newsletter-scheduler module).
 Marketplace: publish / search (Phase 4 — module-marketplace module).
+Analytics: analytics (Phase 5 — analytics-tracker module).
 """
 import sys
 import json
@@ -16,9 +17,23 @@ import subprocess
 from datetime import datetime, timezone
 
 # Paths
-JANE_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # repo root (parent of src/)
+_JANE_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATE_DB = os.path.expanduser("~/.hermes/state.db")
-MODULE_MARKETPLACE_SCRIPT = os.path.join(JANE_ROOT, "modules", "module-marketplace", "scripts", "package.py")
+_MODULES = os.path.join(_JANE_ROOT, "modules")
+SCRIPTS = {
+    "marketplace": os.path.join(_JANE_ROOT, "modules", "module-marketplace", "scripts", "package.py"),
+    "analytics": os.path.join(_JANE_ROOT, "modules", "analytics-tracker", "scripts", "collect.py"),
+}
+
+
+def _run_script(script_key, args):
+    """Delegate to a module script (keeps CLI thin, modules self-contained)."""
+    script = SCRIPTS.get(script_key)
+    if not script or not os.path.isfile(script):
+        print(f"ERROR: {script_key} script not found at {script}", file=sys.stderr)
+        return False
+    result = subprocess.run([sys.executable, script] + args, capture_output=False, timeout=60)
+    return result.returncode == 0
 
 
 # ── Module management (Phase 0) ─────────────────────────────────────────────
@@ -85,7 +100,6 @@ def list_sessions():
 def _session_to_dict(conn, session_id):
     """Convert a single session + its messages to a dict."""
     c = conn.cursor()
-
     c.execute("""
         SELECT id, title, model, profile_name, message_count,
                started_at, ended_at, cwd, estimated_cost_usd
@@ -97,9 +111,7 @@ def _session_to_dict(conn, session_id):
 
     c.execute("""
         SELECT role, content, timestamp, token_count
-        FROM messages
-        WHERE session_id = ?
-        ORDER BY id ASC
+        FROM messages WHERE session_id = ? ORDER BY id ASC
     """, (session_id,))
     msgs = c.fetchall()
 
@@ -130,10 +142,7 @@ def _session_to_dict(conn, session_id):
 
 
 def export_json(session_id=None, offset=0, limit=None, output_path=None):
-    """
-    Export Hermes sessions to stable paginated JSON.
-    Schema is versioned (version=1.0) with forward-compatible design.
-    """
+    """Export Hermes sessions to stable paginated JSON."""
     if not os.path.isfile(STATE_DB):
         print(f"ERROR: state.db not found at {STATE_DB}")
         sys.exit(1)
@@ -147,7 +156,6 @@ def export_json(session_id=None, offset=0, limit=None, output_path=None):
             print(f"ERROR: session '{session_id}' not found in state.db")
             conn.close()
             sys.exit(1)
-
         result = {
             "version": "1.0",
             "exported_at": datetime.now(timezone.utc).isoformat(),
@@ -157,43 +165,31 @@ def export_json(session_id=None, offset=0, limit=None, output_path=None):
     else:
         c = conn.cursor()
         total = c.execute("SELECT COUNT(*) FROM sessions WHERE archived = 0").fetchone()[0]
-
         if limit is None:
             limit = 50
         limit = min(limit, 500)
-
         c.execute("""
-            SELECT id FROM sessions
-            WHERE archived = 0
-            ORDER BY started_at DESC
-            LIMIT ? OFFSET ?
+            SELECT id FROM sessions WHERE archived = 0
+            ORDER BY started_at DESC LIMIT ? OFFSET ?
         """, (limit, offset))
-
         session_ids = [r["id"] for r in c.fetchall()]
         sessions = [_session_to_dict(conn, sid) for sid in session_ids]
         sessions = [s for s in sessions if s is not None]
-
         result = {
             "version": "1.0",
             "exported_at": datetime.now(timezone.utc).isoformat(),
             "sessions": sessions,
-            "pagination": {
-                "offset": offset,
-                "limit": limit,
-                "total_sessions": total,
-                "has_more": (offset + limit) < total,
-            },
+            "pagination": {"offset": offset, "limit": limit, "total_sessions": total,
+                           "has_more": (offset + limit) < total},
         }
 
     conn.close()
-
     if output_path:
         with open(output_path, "w") as f:
             json.dump(result, f, indent=2, ensure_ascii=False)
         print(f"Exported {len(result['sessions'])} session(s) to {output_path}")
     else:
         print(json.dumps(result, indent=2, ensure_ascii=False))
-
     return result
 
 
@@ -237,11 +233,7 @@ def generate_newsletter(dry_run=False, limit=10):
         pass
 
     now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
-    lines = [
-        f"# Jane OS Newsletter — {now}",
-        "", "## Recent Sessions", "",
-    ]
-
+    lines = [f"# Jane OS Newsletter — {now}", "", "## Recent Sessions", ""]
     if sessions:
         for s in sessions[:limit]:
             lines.append(f"### {s['title']}")
@@ -253,7 +245,6 @@ def generate_newsletter(dry_run=False, limit=10):
     else:
         lines.append("_No recent sessions._")
         lines.append("")
-
     lines.append("## Module Updates (recent commits)")
     lines.append("")
     if updates:
@@ -263,7 +254,6 @@ def generate_newsletter(dry_run=False, limit=10):
     else:
         lines.append("_No module updates._")
         lines.append("")
-
     content = "\n".join(lines)
     if dry_run:
         print(content)
@@ -273,57 +263,29 @@ def generate_newsletter(dry_run=False, limit=10):
     return len(sessions) + len(updates) > 0
 
 
-# ── Phase 4: Marketplace (module-marketplace module) ─────────────────────────
-
-
-def run_marketplace(cmd_args):
-    """Delegate to the module-marketplace package.py script."""
-    script = os.path.abspath(MODULE_MARKETPLACE_SCRIPT)
-    if not os.path.isfile(script):
-        print(f"ERROR: module-marketplace script not found at {script}", file=sys.stderr)
-        return False
-
-    result = subprocess.run(
-        [sys.executable, script] + cmd_args,
-        capture_output=False, timeout=60
-    )
-    return result.returncode == 0
-
-
-def publish_module(module_name):
-    """Publish a module via the marketplace."""
-    success = run_marketplace(["publish", module_name])
-    if not success:
-        sys.exit(1)
-
-
-def search_modules(query):
-    """Search the local registry via the marketplace."""
-    success = run_marketplace(["search", query])
-    if not success:
-        sys.exit(1)
-
-
 # ── CLI dispatch ─────────────────────────────────────────────────────────────
 
 USAGE = """usage: cli.py <command> [args]
 
 Module management (Phase 0):
-  list                                    List available modules
-  install <module-name>                   Install a module
-  uninstall <module-name>                 Uninstall a module
+  list                                  List available modules
+  install <module-name>                 Install a module
+  uninstall <module-name>               Uninstall a module
 
-Chat export (Phase 2 — json-chat-export module):
-  sessions                                List Hermes sessions from state.db
-  export --format json [--session-id ID]  Export sessions to JSON
+Chat export (Phase 2 — json-chat-export):
+  sessions                              List Hermes sessions from state.db
+  export --format json [--session-id ID] Export sessions to JSON
          [--offset N] [--limit N] [--output FILE]
 
-Newsletter (Phase 3 — newsletter-scheduler module):
-  generate [--dry-run] [--limit N]        Generate newsletter from sessions + git log
+Newsletter (Phase 3 — newsletter-scheduler):
+  generate [--dry-run] [--limit N]      Generate newsletter from sessions + git log
 
-Marketplace (Phase 4 — module-marketplace module):
-  publish <module-name>                   Validate + package + register a module
-  search <query>                          Search the local module registry"""
+Marketplace (Phase 4 — module-marketplace):
+  publish <module-name>                 Validate + package + register a module
+  search <query>                        Search the local module registry
+
+Analytics (Phase 5 — analytics-tracker):
+  analytics [--output FILE]             Collect Khoj-gap parity metrics from state.db"""
 
 
 def main():
@@ -338,63 +300,41 @@ def main():
     elif cmd == "sessions":
         list_sessions()
     elif cmd == "export":
-        session_id = None
-        offset = 0
-        limit = None
-        output_path = None
-        fmt = "json"
-
-        args = sys.argv[2:]
-        i = 0
+        session_id = None; offset = 0; limit = None; output_path = None; fmt = "json"
+        args = sys.argv[2:]; i = 0
         while i < len(args):
-            if args[i] == "--session-id" and i + 1 < len(args):
-                session_id = args[i + 1]; i += 2
-            elif args[i] == "--offset" and i + 1 < len(args):
-                offset = int(args[i + 1]); i += 2
-            elif args[i] == "--limit" and i + 1 < len(args):
-                limit = int(args[i + 1]); i += 2
-            elif args[i] == "--output" and i + 1 < len(args):
-                output_path = args[i + 1]; i += 2
-            elif args[i] == "--format" and i + 1 < len(args):
-                fmt = args[i + 1]; i += 2
+            if args[i] == "--session-id" and i + 1 < len(args): session_id = args[i + 1]; i += 2
+            elif args[i] == "--offset" and i + 1 < len(args): offset = int(args[i + 1]); i += 2
+            elif args[i] == "--limit" and i + 1 < len(args): limit = int(args[i + 1]); i += 2
+            elif args[i] == "--output" and i + 1 < len(args): output_path = args[i + 1]; i += 2
+            elif args[i] == "--format" and i + 1 < len(args): fmt = args[i + 1]; i += 2
             else:
-                print(f"ERROR: unknown argument '{args[i]}'")
-                print(USAGE)
-                sys.exit(1)
-
-        if fmt != "json":
-            print(f"ERROR: unsupported format '{fmt}' (only 'json' supported)")
-            sys.exit(1)
-
+                print(f"ERROR: unknown argument '{args[i]}'"); print(USAGE); sys.exit(1)
+        if fmt != "json": print(f"ERROR: unsupported format '{fmt}'"); sys.exit(1)
         export_json(session_id=session_id, offset=offset, limit=limit, output_path=output_path)
     elif cmd == "generate":
-        dry_run = "--dry-run" in sys.argv
-        limit = 10
-        args = sys.argv[2:]
-        i = 0
+        dry_run = "--dry-run" in sys.argv; limit = 10
+        args = sys.argv[2:]; i = 0
         while i < len(args):
-            if args[i] == "--dry-run":
-                i += 1
-            elif args[i] == "--limit" and i + 1 < len(args):
-                limit = int(args[i + 1]); i += 2
+            if args[i] == "--dry-run": i += 1
+            elif args[i] == "--limit" and i + 1 < len(args): limit = int(args[i + 1]); i += 2
             else:
-                print(f"ERROR: unknown argument '{args[i]}'")
-                print(USAGE)
-                sys.exit(1)
-
+                print(f"ERROR: unknown argument '{args[i]}'"); print(USAGE); sys.exit(1)
         generate_newsletter(dry_run=dry_run, limit=limit)
     elif cmd == "publish":
         if len(sys.argv) < 3:
-            print("ERROR: publish requires a module name")
-            print("Usage: cli.py publish <module-name>")
-            sys.exit(1)
-        publish_module(sys.argv[2])
+            print("ERROR: publish requires a module name\nUsage: cli.py publish <module-name>"); sys.exit(1)
+        ok = _run_script("marketplace", ["publish", sys.argv[2]])
+        sys.exit(0 if ok else 1)
     elif cmd == "search":
         if len(sys.argv) < 3:
-            print("ERROR: search requires a query")
-            print("Usage: cli.py search <query>")
-            sys.exit(1)
-        search_modules(sys.argv[2])
+            print("ERROR: search requires a query\nUsage: cli.py search <query>"); sys.exit(1)
+        ok = _run_script("marketplace", ["search", sys.argv[2]])
+        sys.exit(0 if ok else 1)
+    elif cmd == "analytics":
+        args = sys.argv[2:]
+        ok = _run_script("analytics", args)
+        sys.exit(0 if ok else 1)
     else:
         print(USAGE)
         sys.exit(1 if cmd not in ("list",) else 0)

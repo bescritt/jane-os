@@ -1,0 +1,9 @@
+{
+  "name": "image-generation-core",
+  "extends": "Hermes: image generation core module (Phase 1)",
+  "dependencies": ["python3"],
+  "permissions": ["filesystem", "network"],
+  "install": "Copy module files to Jane install dir",
+  "uninstall": "Remove module files from Jane install dir",
+  "description": "Core module for image generation capabilities, extending Hermes with diffusion-based image synthesis support. Scaffolding for Phase 1 of the Jane OS roadmap."
+}

@@ -1,0 +1,9 @@
+{
+  "name": "json-chat-export",
+  "extends": "Hermes: stable JSON chat export with pagination (Phase 2)",
+  "dependencies": ["python3", "hermes-agent"],
+  "permissions": ["filesystem", "read:state_db"],
+  "description": "Exports Hermes Agent chat sessions to stable, paginated JSON format. Reads from ~/.hermes/state.db session store. Supports single-session and bulk export with offset/limit pagination.",
+  "install": "Copy module files to Jane install dir; add 'export' subcommand to CLI",
+  "uninstall": "Remove module files; CLI reverts to base commands"
+}

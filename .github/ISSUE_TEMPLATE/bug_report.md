@@ -7,7 +7,7 @@ assignees: ''
 ---
 
 **Describe the bug**
-A clear description of what the bug is.
+A clear description of what a bug constitutes.
 
 **To Reproduce**
 1. Go to '...'

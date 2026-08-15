@@ -6,8 +6,8 @@ labels: enhancement
 assignees: ''
 ---
 
-**Is your feature request related to a problem? Please describe.**
-A clear description of what the problem is.
+**Does your feature request relate to a problem? If so, describe below.**
+A clear description of the problem faced.
 
 **Describe the solution you'd like**
 A clear description of what you want to happen.

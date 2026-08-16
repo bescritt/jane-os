@@ -5,8 +5,7 @@
 **Permissions:** filesystem, network, package_modules
 
 
-Phase 4 module for Jane OS. Enables community sharing of Jane OS modules via a
-local registry with manifest validation, content-hashed packaging, and search.
+Community marketplace module. Enables module sharing via a local registry with manifest validation, SHA256-hashed packaging, and search.
 
 ## Current Status
 This module serves as **implemented** — the `package.py` script provides manifest validation,

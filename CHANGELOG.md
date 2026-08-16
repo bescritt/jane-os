@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Phase 1 scaffolds: obsidian-adapter, image-generation-core (manifest + directory structure)
+- Phase 2: json-chat-export module (stable JSON chat export with pagination) — `src/cli.py export`, `src/cli.py sessions`
+- Phase 3: newsletter-scheduler module (newsletter generation from sessions + git log) — `src/cli.py generate`
+- Phase 4: module-marketplace module (local registry, manifest validation, SHA256 packaging, search) — `src/cli.py publish`, `src/cli.py search`
+- Phase 5: analytics-tracker module (Khoj-gap capability parity metrics from state.db) — `src/cli.py analytics`
+- E-Prime compliance: IDEA.md, README.md, CONTRIBUTING.md, GitHub templates converted to active voice
+- Wallace's Wheel review (docs/WHEEL_REVIEW.md): confirmed 3 bugs, applied fixes
+- GitHub Pages site (docs/index.md) + promotion topics
+
+### Fixed
+- Analytics tracker: removed `eprime_enforcement` (Hermes core feature, not Jane OS), switched to `tool_name` + `tool_calls` as primary signal (over-counting fix)
+- All 7 module READMEs: added Extends/Dependencies/Permissions declaration block
+- cli.py: fixed relative paths (now uses _JANE_ROOT/_MODULES), added --help/-h support, fixed error exit codes
+
 ## [0.1.0] - 2026-08-14
 
 ### Added

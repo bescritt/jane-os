@@ -94,7 +94,7 @@ OS instance, enabling remote session management, notification delivery, and
 lightweight querying. Built as a progressive web app (PWA) for cross-platform
 deployment, or native via React Native/Flutter for app-store distribution.
 
-Per IDEA.md §74, this serves as Phase 3 — not a core requirement but a product-layer
+Per IDEA.md §74, this is Phase 3 — not a core requirement but a product-layer
 capability. Approach: **PWA first** (lowest dev cost, runs everywhere), native
 as Phase 3 stretch.
 
@@ -259,5 +259,5 @@ Phase 2 complete ──FS──> P3-2 (Phone App) ──FS──> P3-1 (Newslett
 
 **Rationale:** P3-2 (Phone App) and P3-1 (Newsletter) share the json-chat-export
 API as their content source. P3-3 (Enterprise) remains independent and starts
-once the local bridge pattern serves as established. P3-1 and P3-2 build in
+once the local bridge pattern is established. P3-1 and P3-2 build in
 parallel (both consume Phase 2's export module).

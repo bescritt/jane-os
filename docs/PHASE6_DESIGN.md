@@ -145,7 +145,7 @@ drift.
 ```
 
 ### 3.3 Integration Points
-- **`module-marketplace`** (Phase 4): manifest.json serves as source of truth
+- **`module-marketplace`** (Phase 4): manifest.json is the source of truth
 - **`architecture-diagram` skill**: Mermaid diagram generation
 - **`documentation` skill**: existing docs quality patterns
 - **`hermes-agent-skill-authoring` skill**: SKILL.md template patterns
@@ -236,7 +236,7 @@ tooling template).
 
 ## Sequencing Recommendation
 
-Phase 6 serves as **maturity engineering** — it transforms Jane OS from a working prototype into a
+Phase 6 is **maturity engineering** — it transforms Jane OS from a working prototype into a
 production-ready open source project. Recommended execution order:
 
 1. **P6-1 (DX Platform)** — 8.0 units: makes ALL other work easier, reduces friction
@@ -244,5 +244,5 @@ production-ready open source project. Recommended execution order:
 3. **P6-3 (Docs)** + **P6-4 (Release)** in parallel — 8.0 + 8.5 = 16.5 units
 
 Phase 6 items execute as separate PROJECT-mode invocations (3-4 sessions), each
-gated by judge_gate + smoke_test. This serves as the natural conclusion of the Wheel iteration:
+gated by judge_gate + smoke_test. This is the natural conclusion of the Wheel iteration:
 the experiment revealed concrete improvements, and Phase 6 plans the systematic follow-up.

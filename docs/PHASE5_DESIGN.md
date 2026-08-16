@@ -88,7 +88,7 @@ IDEA.md §46 ("be testable against the measured behavior of Khoj and Hermes").
 ## 2.0 Open Source Graduation
 
 ### 2.1 Overview
-IDEA.md §81 states the repo serves as intentionally public and open to contributions. Phase 5
+IDEA.md §81 states the repo is intentionally public and open to contributions. Phase 5
 formalizes this: a real open-source project with governance, contributor pipeline, and
 community health.
 

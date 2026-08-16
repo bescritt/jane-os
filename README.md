@@ -1,12 +1,12 @@
 # Jane OS — Overlay for Hermes Agent
 
-Jane OS serves as a lightweight, modular overlay for [Hermes Agent](https://hermes-agent.nousresearch.com/)
+Jane OS is a lightweight, modular overlay for [Hermes Agent](https://hermes-agent.nousresearch.com/)
 that provides a product layer addressing the capabilities Hermes lacks on its own. See
 [`IDEA.md`](IDEA.md) for the full design document and roadmap.
 
 ## Features
 
-- **Modular design** — each capability serves as an installable module
+- **Modular design** — each capability is an installable module
 - **Hermes integration** — modules extend Hermes' agentic capabilities without forking
 - **Cross-platform** — install/uninstall runs on Windows, macOS, and Linux
 - **Smoke-tested** — every change validates via `tests/smoke_test.sh`
@@ -69,8 +69,8 @@ python3 src/cli.py uninstall <module-name>
 
 See [`IDEA.md`](IDEA.md) for the full roadmap. Current status:
 - **Phase 0** — Foundation complete (CI, docs, templates, smoke tests)
-- **Phase 1** — In progress (Obsidian adapter, image-gen core, TTS module)
-- **Phase 2** — Implemented (pgvector RAG, JSON export, Exa reader — see [`docs/PHASE2_DESIGN.md`](docs/PHASE2_DESIGN.md))
+|- **Phase 1** — Scaffolds in place (Obsidian adapter, image-gen core, TTS module)
+|- **Phase 2** — Implemented (JSON export) + Planning (pgvector RAG, Exa reader — see [`docs/PHASE2_DESIGN.md`](docs/PHASE2_DESIGN.md))
 - **Phase 3** — Planned (newsletter, phone app, enterprise deployment — see [`docs/PHASE3_DESIGN.md`](docs/PHASE3_DESIGN.md))
 - **Phase 4** — Implemented (module marketplace — see [`docs/PHASE4_DESIGN.md`](docs/PHASE4_DESIGN.md))
 - **Phase 5** — Implemented (analytics tracker — see [`docs/PHASE5_DESIGN.md`](docs/PHASE5_DESIGN.md))

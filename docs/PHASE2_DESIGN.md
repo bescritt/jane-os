@@ -1,7 +1,7 @@
 # Phase 2 Design Document — Jane OS
 
-> **Status:** Planning (no implementation). Per IDEA.md §67-69.
-> **Scope:** Detailed design for three Phase 2 deliverables. Not built — planned.
+> **Status:** Implemented (json-chat-export) + Planning (pgvector RAG, Exa reader). Per IDEA.md §67-69.
+> **Scope:** Detailed design for three Phase 2 deliverables. json-chat-export IS implemented; the other two remain planned.
 
 ## Executive Summary
 
@@ -12,7 +12,7 @@ Phase 2 of Jane OS (IDEA.md §67) has three items:
 
 This document specifies the design, integration points, dependencies, and
 estimation for each. All Phase 2 items integrate with existing Hermes Agent
-capabilities — Jane OS serves as an overlay, not a replacement.
+capabilities — Jane OS is an overlay, not a replacement.
 
 ## Integration Anchors (Existing Hermes Skills)
 
@@ -103,7 +103,7 @@ Per `llama-cpp` skill guidance:
 | P2-1.2–P2-1.4 | 1.0 unit | Schema + extension |
 | P2-1.5–P2-1.6 | 1.5 units | Embedding pipeline + CLI |
 | P2-1.7 | 1.0 unit | Hermes tool integration |
-| **Total** | **4.0 units** | CPU-bound embedding; batch indexing serves as the bottleneck |
+| **Total** | **4.0 units** | CPU-bound embedding; batch indexing is the bottleneck |
 
 ### 1.7 Risks
 - R-P2-1: CPU embedding runs slow (minutes for hundreds of documents) — mitigation: batch + progress
@@ -122,7 +122,7 @@ Per `hermes-features-reference` skill (§6: Key Paths):
 - `~/.hermes/state.db` — SQLite session store (primary data source)
 - `~/.hermes/sessions/` — Session transcripts (raw, human-readable)
 
-The SQLite DB serves as the structured source of truth; session files remain supplementary.
+The SQLite DB is the structured source of truth; session files remain supplementary.
 
 ### 2.3 JSON Schema
 
@@ -332,7 +332,7 @@ and establishes the session export format that P2-1 builds on (exported sessions
 
 **P2-1 (pgvector)** and **P2-3 (Exa Reader)** remain independent of each other; both consume P2-2 output.
 
-**Rationale:** P2-2 serves as the foundational data-access layer; P2-1 and P2-3 both build on exported session
+**Rationale:** P2-2 is the foundational data-access layer; P2-1 and P2-3 both build on exported session
 data. This sequencing minimizes rework if the JSON schema needs adjustment.
 
 ---

@@ -12,13 +12,10 @@ the process for submitting changes.
 - [Pull Request Process](#pull-request-process)
 
 ## Code of Conduct
-
-This project follows the Hermes Agent community standards. Treat others with respect,
-constructive, and assume good faith in all interactions.
+This project follows the Hermes Agent community standards. Treat others with respect, be constructive, and assume good faith in all interactions.
 
 ## Getting Started
-
-Jane OS serves as a lightweight overlay for Hermes Agent. To start:
+Jane OS is a lightweight overlay for Hermes Agent. To start:
 
 1. Fork the repository
 2. Clone your fork:
@@ -32,7 +29,6 @@ Jane OS serves as a lightweight overlay for Hermes Agent. To start:
    ```
 
 ## Development Workflow
-
 1. Create a branch for your feature or bugfix:
    ```bash
    git checkout -b feature/my-feature
@@ -43,8 +39,7 @@ Jane OS serves as a lightweight overlay for Hermes Agent. To start:
 5. Push to your fork and open a pull request
 
 ## Module Development
-
-Jane OS serves as modular. See `IDEA.md` for the roadmap and `modules/sample_module/`
+Jane OS is modular. See `IDEA.md` for the roadmap and `modules/sample_module/`
 for the manifest format.
 
 Each module must declare:
@@ -56,14 +51,12 @@ Each module must declare:
 - `description` — human-readable summary
 
 ## Testing
-
 All changes must pass the smoke test before merging:
 ```bash
 bash tests/smoke_test.sh
 ```
 
 ## Pull Request Process
-
 1. Ensure tests pass
 2. Use the PR template — fill out the description and checklist
 3. Request review from a maintainer
@@ -71,5 +64,4 @@ bash tests/smoke_test.sh
 5. Once CI runs green and you have approval, a maintainer merges
 
 ## Questions?
-
 Open an issue if you have questions, concerns, or proposals.

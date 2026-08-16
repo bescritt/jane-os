@@ -7,7 +7,7 @@
 
 ## Executive Summary
 
-Phase 4's "Community & Marketplace" serves as implemented as a working module. The
+Phase 4's "Community & Marketplace" is implemented as a working module. The
 `module-marketplace` module provides:
 
 1. **Manifest validation** — checks required fields (name, extends, dependencies, permissions)
@@ -75,6 +75,6 @@ exit=0
 
 ## Procurement Make/Buy Note (per PMI Procurement KA)
 The registry uses a **local JSON file** (~/.jane/registry/index.json) rather than a PostgreSQL
-database or Redis. Rationale: the local JSON approach serves as sufficient for the proof-of-concept
+database or Redis. Rationale: the local JSON approach is sufficient for the proof-of-concept
 and requires zero external dependencies. The central registry server (Phase 4.1.4) adopts a
 real database when the marketplace scales to distributed/multi-user.

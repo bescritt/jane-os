@@ -14,7 +14,7 @@ Each module should declare:
 - **Not a replacement for Hermes core tools, judge, memory, or E-Prime enforcement**
 - **Not a generic agent framework**
 - **Not a duplicate of features Hermes already has**, unless those features need productization
-- **Not a SaaS product in its own right** — the enterprise tier serves as an overlay deployment layer for Hermes+Jane, not a separate hosted service
+- **Not a SaaS product in its own right** — the enterprise tier is an overlay deployment layer for Hermes+Jane, not a separate hosted service
 
 ---
 
@@ -77,7 +77,7 @@ A stock Hermes installation plus Jane OS should:
 
 ## Contributing
 
-This repository serves as intentionally public and open to contributions.
+This repository is intentionally public and open to contributions.
 
 Good first steps:
 
@@ -90,7 +90,7 @@ Good first steps:
 
 ## License
 
-TBD — likely MIT or Apache-2.0.
+MIT — see [LICENSE](./LICENSE).
 
 ---
 

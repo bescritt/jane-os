@@ -7,7 +7,7 @@ title: Jane OS — Overlay for Hermes
 
 **A lightweight overlay that productizes Hermes Agent capabilities — installer scripts, module manifests, and cross-platform smoke tests.**
 
-## What serves as Jane OS?
+## What is Jane OS?
 
 Jane OS adds a layer of usability on top of Hermes Agent:
 

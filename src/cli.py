@@ -38,24 +38,36 @@ def _run_script(script_key, args):
 
 # ── Module management (Phase 0) ─────────────────────────────────────────────
 
+def _usage_exit(code=0):
+    """Print USAGE and exit. Use code=0 for --help, code=1 for errors."""
+    print(USAGE)
+    sys.exit(code)
+
+
 def list_mods():
-    for p in sorted(os.listdir("modules")):
-        m = f"modules/{p}/manifest.json"
+    for p in sorted(os.listdir(_MODULES)):
+        m = os.path.join(_MODULES, p, "manifest.json")
         if os.path.isfile(m):
             d = json.load(open(m))
             print(f"{p}: extends {d.get('extends')}")
 
 
 def install(name):
-    src = f"modules/{name}"
-    dst = f".jane_installed/{name}"
+    src = os.path.join(_MODULES, name)
+    dst = os.path.join(_JANE_ROOT, ".jane_installed", name)
     shutil.rmtree(dst, ignore_errors=True)
+    if not os.path.isdir(src):
+        print(f"ERROR: module '{name}' not found at {src}", file=sys.stderr)
+        sys.exit(1)
     shutil.copytree(src, dst)
     print("installed", name)
 
 
 def uninstall(name):
-    shutil.rmtree(f".jane_installed/{name}", ignore_errors=True)
+    dst = os.path.join(_JANE_ROOT, ".jane_installed", name)
+    if not os.path.isdir(dst):
+        print(f"WARNING: module '{name}' not installed at {dst}", file=sys.stderr)
+    shutil.rmtree(dst, ignore_errors=True)
     print("removed", name)
 
 
@@ -297,6 +309,8 @@ def main():
         install(sys.argv[2])
     elif cmd == "uninstall" and len(sys.argv) > 2:
         uninstall(sys.argv[2])
+    elif cmd in ("-h", "--help", "help"):
+        _usage_exit(0)
     elif cmd == "sessions":
         list_sessions()
     elif cmd == "export":
@@ -309,8 +323,8 @@ def main():
             elif args[i] == "--output" and i + 1 < len(args): output_path = args[i + 1]; i += 2
             elif args[i] == "--format" and i + 1 < len(args): fmt = args[i + 1]; i += 2
             else:
-                print(f"ERROR: unknown argument '{args[i]}'"); print(USAGE); sys.exit(1)
-        if fmt != "json": print(f"ERROR: unsupported format '{fmt}'"); sys.exit(1)
+                print(f"ERROR: unknown argument '{args[i]}'", file=sys.stderr); _usage_exit(1)
+        if fmt != "json": print(f"ERROR: unsupported format '{fmt}'", file=sys.stderr); _usage_exit(1)
         export_json(session_id=session_id, offset=offset, limit=limit, output_path=output_path)
     elif cmd == "generate":
         dry_run = "--dry-run" in sys.argv; limit = 10
@@ -319,16 +333,20 @@ def main():
             if args[i] == "--dry-run": i += 1
             elif args[i] == "--limit" and i + 1 < len(args): limit = int(args[i + 1]); i += 2
             else:
-                print(f"ERROR: unknown argument '{args[i]}'"); print(USAGE); sys.exit(1)
+                print(f"ERROR: unknown argument '{args[i]}'", file=sys.stderr); _usage_exit(1)
         generate_newsletter(dry_run=dry_run, limit=limit)
     elif cmd == "publish":
         if len(sys.argv) < 3:
-            print("ERROR: publish requires a module name\nUsage: cli.py publish <module-name>"); sys.exit(1)
+            print("ERROR: publish requires a module name", file=sys.stderr)
+            print("Usage: cli.py publish <module-name>", file=sys.stderr)
+            _usage_exit(1)
         ok = _run_script("marketplace", ["publish", sys.argv[2]])
         sys.exit(0 if ok else 1)
     elif cmd == "search":
         if len(sys.argv) < 3:
-            print("ERROR: search requires a query\nUsage: cli.py search <query>"); sys.exit(1)
+            print("ERROR: search requires a query", file=sys.stderr)
+            print("Usage: cli.py search <query>", file=sys.stderr)
+            _usage_exit(1)
         ok = _run_script("marketplace", ["search", sys.argv[2]])
         sys.exit(0 if ok else 1)
     elif cmd == "analytics":
@@ -336,8 +354,8 @@ def main():
         ok = _run_script("analytics", args)
         sys.exit(0 if ok else 1)
     else:
-        print(USAGE)
-        sys.exit(1 if cmd not in ("list",) else 0)
+        print(f"ERROR: unknown command '{cmd}'", file=sys.stderr)
+        _usage_exit(1)
 
 
 if __name__ == "__main__":
